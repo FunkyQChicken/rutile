@@ -1,6 +1,10 @@
+require "pry"
 
 class Token 
     def initialize(type, string)
+        if @type == :transition_state
+            throw "Malformed token: #{string}"
+        end
         @type = type
         @string = string
     end
@@ -12,38 +16,59 @@ class Parser
         @file_stack = []
         @next_files = files.reverse
         @curr_file  = open(@next_files.pop())
-
-        @char = nil
-        @string = ""
     end
 
-    def next()
-        return_val  = nil
-        while @curr_file
-            if (@curr_file.eof)
-                rev_stack
-                @fsm.reset
-                next
-            end
-            @char = @curr_file.readchar
+    def parse()
+        Enumerator.new do |out|
+            char = nil
+            string = ""
+            recovery_string = ""
+            return_val = @fsm.val
+            buffer = []
+            while @curr_file
+                # reached the end of the file
+                if (@curr_file.eof && buffer.empty?)
+                    rev_stack
+                    ret = Token.new(return_val, string)
+                    @fsm.feed :eof
+                    string = ""
+                    out << ret
+                else
+                    # advance the scanner
+                    if buffer.empty?
+                        char = @curr_file.readchar
+                    else
+                        char = buffer.pop
+                    end
+                    @fsm.feed char
+                    temp_val = @fsm.val
+                    if (temp_val == nil && return_val == nil)
+                        throw "unexpected char '#{char}' following string '#{string}'"
+                    end
+                end
 
-            @fsm.feed @char
-            temp_val = @fsm.val
+                # hit a match
+                if (temp_val == nil && return_val != nil)
+                    ret = Token.new(return_val, string)
+                    string = ""
+                    recovery_string += char
+                    buffer = recovery_string.chars + buffer                        
+                    return_val = nil
+                    out << ret
+                    next
+                elsif (temp_val == :transition_state)
+                    recovery_string += char
+                elsif (temp_val != nil)
+                    recovery_string = ""
+                    return_val = temp_val
+                end
 
-            if (temp_val == nil && return_val != nil)
-                ret = Token.new(return_val, @string)
-                @fsm.reset
-                @fsm.feed @char
-                @string = @char
-                return ret
-            elsif (temp_val != nil)
-                return_val = temp_val
+                # extend the match string
+                string += char
             end
-            @string += @char
         end
-        return nil
     end
-
+    
     # revive the stack 
     def rev_stack()
         @curr_file.close
@@ -66,7 +91,8 @@ class Parser
     end
     
     # increase the file stack
-    def inc_stack()
+    def inc_stack(new_file)
+        @next_files.append(new_file)
         @file_stack.append(@curr_file)
         rev_stack
     end
