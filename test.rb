@@ -1,12 +1,13 @@
-require "./fsm.rb"
+require "./fsm/dfa.rb"
 require "./lexer.rb"
 
-fsm = FSM.new(nil)
+fsm = DFA.new(nil)
 
-start = fsm.start
-fin   = FSM::Node.new(:aba)
-trans = FSM::Node.new(:transition_state)
-ign_ws = FSM::Node.new(:whitespace)
+start  = fsm.start
+p start
+fin    = Node.new(:aba)
+trans  = Node.new(:transition_state)
+ign_ws = Node.new(:whitespace)
 
 start.add("a", fin)
 fin  .add("b", trans)
