@@ -1,4 +1,5 @@
 require "./fsm.rb"
+require "./dfa.rb"
 
 def NFA
     def initialize
@@ -10,8 +11,28 @@ def NFA
     end
 
     def to_dfa
-       states = {}
+        states = {}
+        start = Node::e_closure(@start)
+        to_visit = [start]
+        states[start] = Node.new(nil)
+        
 
+        while !to_visit.empty?
+            visiting = to_visit.pop
+            curr = states[visiting]
+            Node::transitions(visiting).each do |char|
+                next_set = Node::e_closure(Node::move(visiting, char))
+                next_node = states[next_set]
+                if !next_node
+                    next_node = Node.new(:transition_state)
+                    states[next_set] = next_node
+                    to_visit << next_set
+                end
+                curr.add(char, next_node)
+            end
+        end
+
+        return DFA.new(start) 
     end
 end
 

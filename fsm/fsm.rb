@@ -23,7 +23,18 @@ class Node
     end
 
     def add(str, node) 
-        str.chars.each do |char|
+        if (str == nil)
+            @default = node
+            return
+        end
+
+        if (str == "")
+            str = [""]  
+        else
+            str = str.chars
+        end
+
+        str.each do |char|
             if @edges[char] == nil
                 @edges[char] =  []
             end
@@ -32,7 +43,18 @@ class Node
     end
 
     def remove(str)
-        str.chars.each do |char|
+        if (str == nil)
+            @default = nil
+            return
+        end
+
+        if (str == "")
+            str = [""]  
+        else
+            str = str.chars
+        end
+        
+        str.each do |char|
             @edges[char] = nil
         end
     end
@@ -60,9 +82,16 @@ class Node
     end
 
     def Node::move(nodes, str)
-        str = str.chars
-        ret = Set.new
+        if str == ""
+            str = [""]
+        else
+            str = str.chars
+        end
 
+        ret = Set.new
+        if (str == nil) 
+            return Set.new(nodes.map {|node| node.default})
+        end
         nodes.each do |node|
             str.each do |char|
                 temp = nodes.next char
@@ -76,6 +105,27 @@ class Node
 
         return ret
     end
+
+    def Node::transitions(nodes)
+        ret =  Set.new(
+            (nodes.map {|n| n.edges.keys}).flatten
+        ).delete ""
+        if nodes.any? {|n| n.default}
+            ret.add(nil)
+        end
+        return ret
+    end
+
+    def Node::state_name(nodes)
+        syms = Set.new(nodes.map {|n| n.value})
+        if syms.contains? nil
+            return nil
+        end
+        syms.delete :transition_state
+        if syms.size > 1
+            throw "ehh, error, don't want to deal with this...."
+        end
+        return syms.first
 end 
 
 
