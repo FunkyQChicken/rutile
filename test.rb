@@ -1,27 +1,29 @@
-require "./fsm/dfa.rb"
-require "./lexer.rb"
+require 'pry'
 
-fsm = DFA.new(nil)
 
-start  = fsm.start
-p start
-fin    = Node.new(:aba)
-trans  = Node.new(:transition_state)
-ign_ws = Node.new(:whitespace)
+require_relative "./nfa.rb"
+require_relative "lexer.rb"
+require "test-unit"
 
-start.add("a", fin)
-fin  .add("b", trans)
-trans.add("a", fin)
 
-#ignore whitespace
-start.add("\n", ign_ws)
-start.add(" ", ign_ws)
-start.add("\t", ign_ws)
-ign_ws.add("\n", ign_ws)
-ign_ws.add(" ", ign_ws)
-ign_ws.add("\t", ign_ws)
+class Test_FSM < Test::Unit::TestCase
+    # nfa of the regex "((ab)*aba)" :aba  and "\n" :newline
+    def set_nfa
+        aba = NFA::to_nfa "((ab)*aba)", :aba
+        newline = NFA::to_nfa "\n", :newline
+        aba.or newline
 
-parser = Parser.new(fsm, ["aba.test"])
-parser.parse.each do |curr|
-    p curr
+        @nfa = aba
+    end
+
+    def test_to_fsm
+        set_nfa
+
+        files = ["./testfiles/aba.test"]
+        parser_a = Parser.new(@nfa, files)
+        pry
+        a = parser_a.parse.to_a
+        
+        a.each {|t| p t}
+    end
 end

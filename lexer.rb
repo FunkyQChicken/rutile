@@ -1,9 +1,10 @@
 
 class Token 
     def initialize(type, string)
-        if @type == :transition_state
-            throw "Malformed token: #{string}"
+        if @type == [:transition_state]
+            throw Exception.new("Malformed token: #{string}")
         end
+        type.delete :transition_state
         @type = type
         @string = string
     end
@@ -18,6 +19,7 @@ class Parser
     end
 
     def parse()
+        @fsm.reset
         Enumerator.new do |out|
             char = nil
             string = ""
@@ -29,7 +31,7 @@ class Parser
                 if (@curr_file.eof && buffer.empty?)
                     rev_stack
                     ret = Token.new(return_val, string)
-                    @fsm.feed :eof
+                    @fsm.reset
                     string = ""
                     out << ret
                 else
@@ -39,25 +41,25 @@ class Parser
                     else
                         char = buffer.pop
                     end
-                    @fsm.feed char
-                    temp_val = @fsm.val
-                    if (temp_val == nil && return_val == nil)
+                    temp_val = @fsm.feed char
+                    if (temp_val == [] && return_val == [])
                         throw "unexpected char '#{char}' following string '#{string}'"
                     end
                 end
 
                 # hit a match
-                if (temp_val == nil && return_val != nil)
+                if (temp_val == [] && return_val != [])
                     ret = Token.new(return_val, string)
                     string = ""
                     recovery_string += char
                     buffer = recovery_string.chars + buffer                        
-                    return_val = nil
+                    return_val = []
                     out << ret
+                    @fsm.reset
                     next
                 elsif (temp_val == :transition_state)
                     recovery_string += char
-                elsif (temp_val != nil)
+                elsif (temp_val != [])
                     recovery_string = ""
                     return_val = temp_val
                 end

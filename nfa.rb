@@ -1,5 +1,3 @@
-require "pry"
-
 class NFA
     class Node
         attr_accessor :value, :pos, :on_stack, :not, :edges
@@ -47,15 +45,15 @@ class NFA
         end
 
         def mark
-            on_stack = true
+            @on_stack = true
         end
 
         def unmark
-            on_stack = false
+            @on_stack = false
         end
 
         def marked?
-            on_stack
+            @on_stack
         end
     end
     
@@ -84,7 +82,7 @@ class NFA
     def feed(char)
         move(char)
         finalize
-        return get_values
+        return val
     end
 
     def reset
@@ -124,6 +122,7 @@ class NFA
 
     def asterix
         @nodes[@end].add("", @start)
+        @nodes[@start].add("", @end)
     end 
 
     def plus
@@ -147,16 +146,21 @@ class NFA
     end
 
 
+    def val
+        return @old_stack.map do |ind| 
+            @nodes[ind].value
+        end.to_a.uniq
+    end
+
     private
     
     def e_closure(ind)
+        return if @nodes[ind].marked?
         @new_stack << ind
         node = @nodes[ind]
         node.mark
         node.next("").each do |edge|
-            if !@nodes[edge].marked?
-                e_closure(edge)
-            end
+            e_closure(edge)
         end
     end
 
@@ -179,14 +183,8 @@ class NFA
         @new_stack = []
     end
 
-    def get_values
-        return @old_stack.map do |ind| 
-            @nodes[ind].value
-        end.to_a.uniq
-    end
-
     public
-    def self::to_nfa(regex_raw)
+    def self::to_nfa(regex_raw, value)
         regex_raw = regex_raw.chars
         regex = []
         brackets = false
@@ -231,6 +229,8 @@ class NFA
         if (regex != [])
             throw Exception.new "malformed regex."
         end
+
+        ret.set_val value
 
         return ret
     end
@@ -306,4 +306,3 @@ class NFA
         return ret
     end
 end
-pry
