@@ -1,5 +1,6 @@
 
 class Token 
+    attr_accessor :type, :string
     def initialize(type, string)
         if @type == [:transition_state]
             throw Exception.new("Malformed token: #{string}")
