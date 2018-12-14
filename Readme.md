@@ -4,10 +4,10 @@ Currently under heavy developement.
 
 ## Plan
 There are many different layers needed to complete this project,
-* Tokenizer
-* Semantic Analyzer
-* AST Constructor
-* etc
+* Tokenizer  
+* Semantic Analyzer  
+* AST Constructor  
+* etc  
 
 Everything as it is built will be intigrated to the lang.rb file
 Currently the only major completed part is the Tokenizer.
