@@ -33,6 +33,8 @@ class Test_FSM < Test::Unit::TestCase
 
 
     def test_lang
+        # test a basic polish notation calculator
+       
         lang = Lang.new 
         files = ["./testfiles/math.test"]
         
@@ -79,7 +81,10 @@ class Test_FSM < Test::Unit::TestCase
         
     end
     
+
     def test_question
+        # test a small number parser, matches 'binary' strings and adds them to 
+        # results
         lang = Lang.new 
         files = ["./testfiles/question.test"]
 
