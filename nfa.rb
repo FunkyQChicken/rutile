@@ -90,6 +90,7 @@ class NFA
         @old_stack = []
         e_closure(@start)
         finalize
+        return val
     end
 
     def and a
@@ -196,7 +197,17 @@ class NFA
                     regex << :clb
                     brackets = false
                 when "\\"
-                    regex << regex_raw.pop
+                    ch = regex_raw.shift
+                    case ch
+                    when 'd'
+                        regex += "1234567890".chars
+                    when 'a'
+                        regex += "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".chars
+                    when 'w'
+                        regex += " \t".chars
+                    else
+                        regex << ch
+                    end
                 else
                     regex << char
                 end
@@ -218,12 +229,13 @@ class NFA
                 when "|"
                     regex << :pip
                 when "\\"
-                    regex << regex_raw.pop
+                    regex << regex_raw.shift
                 else
                     regex << char
                 end
             end
         end
+
         ret = create_nfa(regex)
 
         if (regex != [])
