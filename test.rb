@@ -86,7 +86,7 @@ class Test_FSM < Test::Unit::TestCase
         @results = []
         
         lang.tok("\n", :eol){|x|}
-        lang.tok("-?([10]+)", :num) {|x| @results << x.to_i}
+        lang.tok("-?[10]+", :num) {|x| @results << x.to_i}
 
         lang.parse files
 

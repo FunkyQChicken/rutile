@@ -289,7 +289,21 @@ class NFA
                 while ((curr = regex.shift) != :clb)
                     chars.append(curr)
                 end
-                ret.and NFA.new(chars, opp)
+
+                segment = NFA.new(chars, opp)
+
+                case (ch = regex.shift)
+                when :plu
+                    segment.plus
+                when :que
+                    segment.question
+                when :ast
+                    segment.asterix
+                else
+                    regex.unshift ch
+                end
+                
+                ret.and segment
 
             # or
             when :pip
