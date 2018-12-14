@@ -1,5 +1,4 @@
 require_relative "nfa.rb"
-require_relative "parser.rb"
 require_relative "lang.rb"
 
 require "test-unit"

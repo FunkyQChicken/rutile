@@ -1,5 +1,5 @@
 require_relative "./nfa.rb"
-require_relative "./parser.rb"
+require_relative "./lexer.rb"
 
 class Lang
     def initialize
