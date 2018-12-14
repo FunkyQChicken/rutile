@@ -72,47 +72,30 @@ class Test_FSM < Test::Unit::TestCase
 
         lang.parse files
 
-        p @results
-
         assert(@results.shift == 10)
         assert(@results.shift == 256)
         assert(@results.shift == 0)
         assert(@results.shift == 16)
         
     end
+    
+    def test_question
+        lang = Lang.new 
+        files = ["./testfiles/question.test"]
+
+        @results = []
+        
+        lang.tok("\n", :eol){|x|}
+        lang.tok("-?([10]+)", :num) {|x| @results << x.to_i}
+
+        lang.parse files
+
+        assert(@results.shift == -1000)
+        assert(@results.shift == 1000)
+        assert(@results.shift == -1010011)
+        assert(@results.shift == -1)
+        assert(@results.shift == -101111)
+    end
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

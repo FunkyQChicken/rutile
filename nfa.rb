@@ -126,6 +126,10 @@ class NFA
         @nodes[@start].add("", @end)
     end 
 
+    def question
+        @nodes[@start].add("", @end)
+    end
+
     def plus
         clone = self.dup
         clone.asterix
@@ -223,6 +227,8 @@ class NFA
                     regex << :ast
                 when "+"
                     regex << :plu
+                when "?"
+                    regex << :que
                 when "["
                     brackets = true
                     regex << :opb
@@ -291,7 +297,7 @@ class NFA
                 ret.or create_nfa(regex)
                 break
 
-            # lastly asterix and plus
+            # lastly asterix plus and question
             when :ast
                 regex.shift
                 ret.asterix
@@ -299,6 +305,10 @@ class NFA
             when :plu
                 regex.shift
                 ret.plus
+
+            when :que
+                regex.shift
+                ret.question
              
             # otherwise it is just a char
             else
