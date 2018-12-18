@@ -40,7 +40,7 @@ class Test_FSM < Test::Unit::TestCase
         @stack = []
         @results = []
 
-        lang.tok("[\\d]+", :num) do |x|
+        lang.tok("-?[\\d]+", :num) do |x|
             @stack << x.to_i
         end
 
@@ -77,6 +77,9 @@ class Test_FSM < Test::Unit::TestCase
         assert(@results.shift == 256)
         assert(@results.shift == 0)
         assert(@results.shift == 16)
+        assert(@results.shift == -4)
+        assert(@results.shift == 16)
+        assert(@results.shift == -1)
         
     end
     
