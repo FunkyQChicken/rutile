@@ -12,7 +12,7 @@ class Token
 end
 
 class Parser
-    attr_accessor  :file_stack, :next_files, :file_stack
+    attr_accessor  :file_stack
 
     def initialize(fsm, files)
         @fsm  = fsm
