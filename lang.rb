@@ -20,7 +20,8 @@ class Lang
 
     def parse(files)
         construct_nfa if @nfa.nil?
-        Parser.new(@nfa, files).parse.each do |token|
+        @parser = Parser.new(@nfa, files)
+        @parser.parse.each do |token|
             id     = token.type.min
             value  = @tokens[id].call(token.string)
             symbol = @symbols[id]
@@ -28,6 +29,22 @@ class Lang
                 #feed it to the grammar thing
             end
         end
+    end
+
+    def add_file(file, back = false)
+        if back
+            @parser.file_stack.unshift file
+        else
+            @parser.inc_stack file
+        end
+    end
+
+    def run
+        files = ARGV
+        if files.nil?
+            files = [STDIN]
+        end
+        parse files
     end
 
     private
