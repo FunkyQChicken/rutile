@@ -57,7 +57,7 @@ class Test_FSM < Test::Unit::TestCase
         # test a basic polish notation calculator
        
         lang = Lang.new 
-        files = ["./testfiles/math.test"]
+        files = ["./testfiles/math.test", "./testfiles/math_a.test"]
         
         @stack = []
         @results = []
@@ -105,6 +105,7 @@ class Test_FSM < Test::Unit::TestCase
         assert(@results.shift == -4)
         assert(@results.shift == 16)
         assert(@results.shift == -1)
+        assert(@results.shift == 1)
         
     end
     
