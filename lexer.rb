@@ -12,6 +12,8 @@ class Token
 end
 
 class Parser
+    attr_accessor  :file_stack, :next_files, :file_stack
+
     def initialize(fsm, files)
         @fsm  = fsm
         @file_stack = []
@@ -30,7 +32,7 @@ class Parser
             while @curr_file
                 # reached the end of the file
                 if (@curr_file.eof && buffer.empty?)
-                    rev_stack
+                    dec_stack
                     ret = Token.new(return_val, string)
                     @fsm.reset
                     string = ""
@@ -71,32 +73,27 @@ class Parser
         end
     end
     
-    # revive the stack 
-    def rev_stack()
-        @curr_file.close
+    # decrease the file stack 
+    def dec_stack()
+        @curr_file.close if @curr_file
         file = @next_files.pop
         if (file == nil)
            @curr_file = nil
-        else
+        elsif file.class == String
             @curr_file = open(file)
+        else
+            @curr_file = file
         end
     end
 
-    # decrement the file stack
-    def dec_stack()
-        if (@file_stack.size == 0)
-            rev_stack
-        else
-            @curr_file.close
-            @curr_file = @file_stack.pop 
-        end
-    end
-    
     # increase the file stack
     def inc_stack(new_file)
-        @next_files.append(new_file)
         @file_stack.append(@curr_file)
-        rev_stack
+        if new_file.class == String
+            @curr_file = open(file)
+        else
+            @curr_file = file
+        end
     end
 
 end
