@@ -1,17 +1,17 @@
 class NFA
     class Node
-        attr_accessor :value, :pos, :on_stack, :not, :edges
+        attr_accessor :value, :pos, :on_stack, :not, :edges, :default
         def initialize(pos)
             @pos = pos
             @edges = {}
             @value = :transition_state
             @on_stack = false
-            @not = nil
+            @default = nil
         end
 
         def next(char)
             ret = @edges[char]
-            return @not if ret == :not
+            return @default if !@default.nil? && ret.nil?
             return  ret ? ret : []
         end
 
@@ -22,22 +22,28 @@ class NFA
             @edges[char] << pos
         end
 
+        def empty(char)
+            @edges[char] = []
+        end
+
         def update_pos(offset)
             @edges.keys.each do |k|
-                @edges[k] = @edges[k].map {|n| n + offset}.to_a
+                @edges[k] = @edges[k].map {|n| (n == :not) ? :not : n + offset}.to_a
             end
             @pos += offset
+            @default = @default.map {|x| x + offset} if @default
         end
 
         def set_not(pos)
-            @not = pos
+            @default = pos
         end
+
 
         def dup
             dupl = Node.new @pos 
 
             dupl.value = @value
-            dupl.not = @not 
+            dupl.default = @default
             dupl.on_stack = @on_stack
             dupl.edges = Marshal.load(Marshal.dump(@edges))
 
@@ -58,6 +64,7 @@ class NFA
     end
     
     attr_accessor :nodes, :start, :end, :new_stack, :old_stack
+
     def initialize(str = [], opp = false, value = :transition_state, dummy: false)
         if !(dummy)
             @nodes = Array.new(2) {|x| Node.new x }
@@ -67,11 +74,17 @@ class NFA
             val = opp ? :not : @end
 
             if opp
-                @nodes[@start].set_not @end
+                @nodes[@start].set_not [@end]
             end
             
             str.each do |char|
-                @nodes[@start].add(char, val)
+                if char == :dot
+                    throw Exception.new ("can't be not AND dot.") if val == :not
+                    @nodes[@start].set_not([val])
+                    @nodes[@start].empty("\n")
+                else
+                    @nodes[@start].add(char, val)
+                end
             end
         end
 
@@ -327,6 +340,7 @@ class NFA
             # otherwise it is just a char
             else
                 char = NFA.new([regex.shift]) 
+
                 case x = regex.shift 
                 when :plu
                     char.plus

@@ -21,7 +21,7 @@ class Lang
     def parse(files)
         construct_nfa if @nfa.nil?
         Parser.new(@nfa, files).parse.each do |token|
-            id     = token.type.max
+            id     = token.type.min
             value  = @tokens[id].call(token.string)
             symbol = @symbols[id]
             if symbol != :ignore

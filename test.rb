@@ -29,6 +29,28 @@ class Test_FSM < Test::Unit::TestCase
     end
 
 
+    def test_dot
+        nfa = NFA::to_nfa "\\(.\\)", :par    
+        newline = NFA::to_nfa "\n", :newline
+        nfa.or newline
+        
+        files = ["./testfiles/dot.test"]
+
+        parser_a = Parser.new(nfa, files)
+
+        @n = nfa
+        a = parser_a.parse.to_a
+        
+        a = a.select {|t| t.type == [:par]}
+        a = a.map {|t| t.string}
+
+        assert(a.shift == "(1)")
+        assert(a.shift == "(3)")
+        assert(a.shift == "(a)")
+        assert(a.shift == "(A)")
+        assert(a.shift == "(.)")
+        assert(a.shift == "(9)")
+    end
 
 
     def test_lang
@@ -64,13 +86,16 @@ class Test_FSM < Test::Unit::TestCase
             @stack << @stack.pop ** @stack.pop
         end
 
-        lang.tok("\n", :eol) do |x|
+        lang.tok("\n") do |x|
             throw Exception.new("malformed line, current @stack is :#{@stack}") if @stack.size > 1
             @results << @stack.pop if !@stack.empty?
         end
 
-        lang.tok("[\\w]+", :white_space) {|x|}
+        lang.tok("[\\w]+") {|x|}
 
+        lang.tok("#.*") {|x|}
+        
+        @l = lang
         lang.parse files
 
         assert(@results.shift == 10)
@@ -103,6 +128,7 @@ class Test_FSM < Test::Unit::TestCase
         assert(@results.shift == -1)
         assert(@results.shift == -101111)
     end
+
 end
 
 
