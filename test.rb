@@ -62,27 +62,27 @@ class Test_FSM < Test::Unit::TestCase
         @stack = []
         @results = []
 
-        lang.tok("-?[\\d]+", :num) do |x|
+        lang.tok('-?[\d]+', :num) do |x|
             @stack << x.to_i
         end
 
-        lang.tok("\\+", :plu) do |x|
+        lang.tok('\+', :plu) do |x|
             @stack << @stack.pop + @stack.pop
         end
 
-        lang.tok("\\-", :sub) do |x|
+        lang.tok('\-', :sub) do |x|
             @stack << @stack.pop - @stack.pop
         end
 
-        lang.tok("\\/", :div) do |x|
+        lang.tok('\/', :div) do |x|
             @stack << @stack.pop / @stack.pop
         end
 
-        lang.tok("\\*", :mul) do |x|
+        lang.tok('\*', :mul) do |x|
             @stack << @stack.pop * @stack.pop
         end
 
-        lang.tok("\\^", :exp) do |x|
+        lang.tok('\^', :exp) do |x|
             @stack << @stack.pop ** @stack.pop
         end
 
@@ -91,7 +91,7 @@ class Test_FSM < Test::Unit::TestCase
             @results << @stack.pop if !@stack.empty?
         end
 
-        lang.tok("[\\w]+") {|x|}
+        lang.tok('[\w]+') {|x|}
 
         lang.tok("#.*") {|x|}
         
