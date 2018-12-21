@@ -1,5 +1,6 @@
 require_relative "./nfa.rb"
 require_relative "./lexer.rb"
+
 module Rutile
     class Lang
         def initialize
@@ -42,9 +43,8 @@ module Rutile
             end
         end
     
-        def run
-            files = ARGV
-            if files.nil?
+        def run(files = ARGV)
+            if files.nil? || files == []
                 files = [STDIN]
             end
             parse files

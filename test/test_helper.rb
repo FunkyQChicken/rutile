@@ -3,7 +3,13 @@ require "rutile"
 
 require "minitest/autorun"
 
+
+TESTFILES = "./test/testfiles/"
+
+def get_test_file(str)
+    return TESTFILES + str
+end
+
 def get_test_files(arr)
-    testfiles = "./test/testfiles/"
-    return arr.map {|str| testfiles + str}
+    return arr.map {|str| get_test_file str}
 end

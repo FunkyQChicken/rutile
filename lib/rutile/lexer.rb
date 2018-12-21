@@ -19,7 +19,8 @@ module Rutile
             @fsm  = fsm
             @file_stack = []
             @next_files = files.reverse
-            @curr_file  = open(@next_files.pop())
+            @curr_file = nil
+            dec_stack
         end
 
         def parse()

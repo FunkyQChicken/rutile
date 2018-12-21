@@ -1,9 +1,8 @@
 require "test_helper"
 require 'pry'
 
-
+# These tests work fairly well, but they are by no means comprehensive.
 class RutileTest < Minitest::Test
-    # nfa of the regex "((ab)*aba)" :aba  and "\n" :newline
 
     def test_that_it_has_a_version_number
       refute_nil ::Rutile::VERSION
@@ -131,5 +130,4 @@ class RutileTest < Minitest::Test
         assert(@results.shift == -1)
         assert(@results.shift == -101111)
     end
-
 end
