@@ -1,4 +1,4 @@
-# RubyParser
+# Rutile
 This is an attempt to make an arbitrary language compiler in ruby.
 Currently under heavy developement.
 
@@ -9,16 +9,32 @@ There are many different layers needed to complete this project,
 * AST Constructor  
 * etc  
 
-Everything as it is built will be intigrated to the lang.rb file
-Currently the only major completed part is the Tokenizer.
+## Installation
 
-## Tokenizer
+Add this line to your application's Gemfile:
+
+```ruby
+gem 'rutile'
+```
+
+And then execute:
+
+    $ bundle
+
+Or install it yourself as:
+
+    $ gem install rutile
+
+## Usage
+
+### Tokenizer
 The tokenizer allows pattern matching via regex and code execution
 on the matched strings. code for a language that adds up all ints fed to it
 would look like so:
+
 ```ruby
 # create a new language, 'l'
-l = Lang.new
+l = Rutile::Lang.new
 
 # keep a running total of numbers
 @total = 0
@@ -42,3 +58,18 @@ l.parse(["input_file"])
 puts @total
 ```
 
+## Development
+
+After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+
+To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run
+`bundle exec rake release`
+, which will create a git tag for the version,push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+
+## Contributing
+
+Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/rutile.
+
+## License
+
+The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).

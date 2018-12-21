@@ -1,20 +1,22 @@
-require_relative "nfa.rb"
-require_relative "lang.rb"
-
-require "test-unit"
+require "test_helper"
 require 'pry'
 
 
-class Test_FSM < Test::Unit::TestCase
+class RutileTest < Minitest::Test
     # nfa of the regex "((ab)*aba)" :aba  and "\n" :newline
 
-    def test_nfa
-        aba = NFA::to_nfa "((ab)*aba)", :aba
-        newline = NFA::to_nfa "\n", :newline
-        aba.or newline
-        files = ["./testfiles/aba.test"]
+    def test_that_it_has_a_version_number
+      refute_nil ::Rutile::VERSION
+    end
+  
 
-        parser_a = Parser.new(aba, files)
+    def test_nfa
+        aba = Rutile::NFA::to_nfa "((ab)*aba)", :aba
+        newline = Rutile::NFA::to_nfa "\n", :newline
+        aba.or newline
+        files = get_test_files ["aba.test"]
+
+        parser_a = Rutile::Parser.new(aba, files)
 
         a = parser_a.parse.to_a
         
@@ -30,13 +32,13 @@ class Test_FSM < Test::Unit::TestCase
 
 
     def test_dot
-        nfa = NFA::to_nfa "\\(.\\)", :par    
-        newline = NFA::to_nfa "\n", :newline
+        nfa = Rutile::NFA::to_nfa "\\(.\\)", :par    
+        newline = Rutile::NFA::to_nfa "\n", :newline
         nfa.or newline
         
-        files = ["./testfiles/dot.test"]
+        files = get_test_files ["dot.test"]
 
-        parser_a = Parser.new(nfa, files)
+        parser_a = Rutile::Parser.new(nfa, files)
 
         @n = nfa
         a = parser_a.parse.to_a
@@ -56,8 +58,8 @@ class Test_FSM < Test::Unit::TestCase
     def test_lang
         # test a basic polish notation calculator
        
-        lang = Lang.new 
-        files = ["./testfiles/math.test", "./testfiles/math_a.test"]
+        lang = Rutile::Lang.new 
+        files = get_test_files ["math.test", "math_a.test"]
         
         @stack = []
         @results = []
@@ -113,8 +115,8 @@ class Test_FSM < Test::Unit::TestCase
     def test_question
         # test a small number parser, matches 'binary' strings and adds them to 
         # results
-        lang = Lang.new 
-        files = ["./testfiles/question.test"]
+        lang = Rutile::Lang.new 
+        files = get_test_files ["question.test"]
 
         @results = []
         
@@ -131,5 +133,3 @@ class Test_FSM < Test::Unit::TestCase
     end
 
 end
-
-
