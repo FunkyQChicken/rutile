@@ -11,6 +11,9 @@ module Rutile
         end
     
         def tok(regex, symbol = :ignore, &block)
+            if block.nil?
+                block = Proc.new {|x|}
+            end
             new_nfa = NFA::to_nfa(regex, @id)
             @symbols << symbol
             @nfas << new_nfa

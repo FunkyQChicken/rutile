@@ -93,9 +93,9 @@ class RutileTest < Minitest::Test
             @results << @stack.pop if !@stack.empty?
         end
 
-        lang.tok('[\w]+') {|x|}
+        lang.tok('[\w]+')
 
-        lang.tok("#.*") {|x|}
+        lang.tok("#.*")
         
         @l = lang
         lang.parse files
