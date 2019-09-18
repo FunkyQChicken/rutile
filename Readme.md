@@ -1,9 +1,9 @@
 # Rutile
-This is an attempt to make an arbitrary language compiler in ruby.
+This is an attempt to make an arbitrary language interpreter in ruby.
 Currently under heavy developement.
 
 ## Plan
-There are many different layers needed to complete this project,
+There are many different layers needed to complete this project,  
 * Tokenizer  
 * Semantic Analyzer  
 * AST Constructor  
@@ -68,7 +68,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/rutile.
+Bug reports and pull requests are welcome on GitHub at https://github.com/FunkyQChicken/rutile.
 
 ## License
 
